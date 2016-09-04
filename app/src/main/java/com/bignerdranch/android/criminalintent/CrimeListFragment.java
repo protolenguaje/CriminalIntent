@@ -1,9 +1,11 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.CheckResult;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+
+import static android.text.format.DateFormat.format;
 
 /**
  * Created by user on 8/25/16.
@@ -38,10 +42,23 @@ public class CrimeListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        updateUI();
+    }
+
     private void updateUI() {
+
         CrimeLab crimeLab = CrimeLab.get(getActivity());
-        mAdapter = new CrimeAdapter(crimeLab.getCrimes());
-        mCrimeRecyclerView.setAdapter(mAdapter);
+
+        if (mAdapter == null) {
+            mAdapter = new CrimeAdapter(crimeLab.getCrimes());
+            mCrimeRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     private class CrimeHolder extends RecyclerView.ViewHolder {
@@ -55,7 +72,7 @@ public class CrimeListFragment extends Fragment {
         public CrimeHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this::onClick);
-            mTilteTextView = (TextView) itemView.findViewById(R.id.list_item_crime_date_text_view);
+            mTilteTextView = (TextView) itemView.findViewById(R.id.list_item_crime_title_text_view);
             mDateTextView = (TextView) itemView.findViewById(R.id.list_item_crime_date_text_view);
             mSolvedCheckBox = (CheckBox) itemView.findViewById(R.id.list_item_crime_solved_check_box);
         }
@@ -63,15 +80,14 @@ public class CrimeListFragment extends Fragment {
         public void bindCrime(Crime crime) {
             mCrime = crime;
             mTilteTextView.setText(mCrime.getTitle());
-            mDateTextView.setText(mCrime.getDate().toString());
+            mDateTextView.setText(format("EEEE, dd MMMM, yyyy", mCrime.getDate()));
             mSolvedCheckBox.setChecked(mCrime.isSolved());
         }
 
         //    implements View.OnClickListener
         private void onClick(View v) {
-            Toast.makeText(getActivity(),
-                    mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT)
-                    .show();
+            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            startActivity(intent);
         }
     }
 

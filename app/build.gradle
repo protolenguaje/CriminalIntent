@@ -23,10 +23,23 @@ android {
     }
 
     buildTypes {
+
         release {
-            minifyEnabled false
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        debug {
+            shrinkResources false
+            minifyEnabled false
+            applicationIdSuffix ".debug"
+        }
+    }
+
+    dexOptions {
+        maxProcessCount 4 // this is the default value
+        javaMaxHeapSize "2g"
     }
 }
 
