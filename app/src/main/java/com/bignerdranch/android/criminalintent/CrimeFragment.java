@@ -1,5 +1,7 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -70,7 +72,13 @@ public class CrimeFragment extends Fragment {
                     mCrime.setSolved(isChecked);
                 });
 
+        returnResult();
+
         return v;
+    }
+
+    public void returnResult() {
+        getActivity().setResult(Activity.RESULT_OK);
     }
 
     private final class CrimeTextWatcher implements TextWatcher {

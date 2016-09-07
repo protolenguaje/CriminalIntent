@@ -1,12 +1,10 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.CheckResult;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ShareCompat;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -46,7 +43,17 @@ public class CrimeListFragment extends Fragment {
     public void onResume() {
 
         super.onResume();
-        updateUI();
+        // This method ask to reload all the items. And it is not necessary because
+        // onActivityResult() is called before onResume when the activity is being restarted.
+        // updateUI();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == Activity.RESULT_OK){
+            mAdapter.notifyItemChanged(requestCode);
+        }
     }
 
     private void updateUI() {
@@ -63,7 +70,7 @@ public class CrimeListFragment extends Fragment {
 
     private class CrimeHolder extends RecyclerView.ViewHolder {
 
-        private TextView mTilteTextView;
+        private TextView mTitleTextView;
         private TextView mDateTextView;
         private CheckBox mSolvedCheckBox;
 
@@ -72,22 +79,22 @@ public class CrimeListFragment extends Fragment {
         public CrimeHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this::onClick);
-            mTilteTextView = (TextView) itemView.findViewById(R.id.list_item_crime_title_text_view);
+            mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_crime_title_text_view);
             mDateTextView = (TextView) itemView.findViewById(R.id.list_item_crime_date_text_view);
             mSolvedCheckBox = (CheckBox) itemView.findViewById(R.id.list_item_crime_solved_check_box);
         }
 
         public void bindCrime(Crime crime) {
             mCrime = crime;
-            mTilteTextView.setText(mCrime.getTitle());
+            mTitleTextView.setText(mCrime.getTitle());
             mDateTextView.setText(format("EEEE, dd MMMM, yyyy", mCrime.getDate()));
             mSolvedCheckBox.setChecked(mCrime.isSolved());
         }
 
-        //    implements View.OnClickListener
+        // implements View.OnClickListener
         private void onClick(View v) {
             Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
-            startActivity(intent);
+            startActivityForResult(intent, getAdapterPosition());
         }
     }
 
