@@ -43,17 +43,7 @@ public class CrimeListFragment extends Fragment {
     public void onResume() {
 
         super.onResume();
-        // This method ask to reload all the items. And it is not necessary because
-        // onActivityResult() is called before onResume when the activity is being restarted.
-        // updateUI();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (resultCode == Activity.RESULT_OK){
-            mAdapter.notifyItemChanged(requestCode);
-        }
+        updateUI();
     }
 
     private void updateUI() {
@@ -93,7 +83,7 @@ public class CrimeListFragment extends Fragment {
 
         // implements View.OnClickListener
         private void onClick(View v) {
-            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
             startActivityForResult(intent, getAdapterPosition());
         }
     }

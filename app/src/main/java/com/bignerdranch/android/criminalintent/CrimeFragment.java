@@ -72,13 +72,7 @@ public class CrimeFragment extends Fragment {
                     mCrime.setSolved(isChecked);
                 });
 
-        returnResult();
-
         return v;
-    }
-
-    public void returnResult() {
-        getActivity().setResult(Activity.RESULT_OK);
     }
 
     private final class CrimeTextWatcher implements TextWatcher {
